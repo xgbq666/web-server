@@ -53,6 +53,8 @@ public class one {
 
 			output.close();
 
+			fis.close();
+
 			System.err.println("成功响应本次请求\n\n\n");
 			
 		}
