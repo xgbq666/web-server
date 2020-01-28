@@ -1,18 +1,12 @@
-import java.net.Socket;
-import java.net.ServerSocket;
-import java.net.InetAddress;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.IOException;
-import java.io.File; 
-import java.io.InputStreamReader;
-import java.io.BufferedReader;
-import java.io.PrintStream;
+import java.io.*;
+import java.net.*;
 
-public class Example {
+public class one {
+
 
 	public static void main(String[] args) throws IOException {
 
+		File a = new File("1.html");
 
 		ServerSocket server = new ServerSocket(9999);
 
@@ -45,10 +39,20 @@ public class Example {
 
 			System.out.println("开始响应请求");
 
+			FileInputStream fis = new FileInputStream(a);
+
+			byte[] b = new byte[1024];
+
+			int len;
+
+			while((len = fis.read(b)) != -1){
+				output.write(b,0,len);
+			}
+
 			output.print("MSS Studio");
 
 			output.close();
-			
+
 			System.err.println("成功响应本次请求\n\n\n");
 			
 		}
