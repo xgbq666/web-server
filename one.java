@@ -18,7 +18,9 @@ public class one {
 
 			System.err.println("接收到请求！");
 
-			BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream(),"GBK"));
+			
+			
 
 			StringBuilder sb = new StringBuilder();
 
@@ -40,20 +42,26 @@ public class one {
 			System.out.println("开始响应请求");
 
 			FileInputStream fis = new FileInputStream(a);
+			
+			String repsonsedHead = "HTTP/1.1 200 \r\n" + "Content-Type:text/html\r\n" + "\r\n";
 
 			byte[] b = new byte[1024];
 
+			output.write(repsonsedHead.getBytes());
+			
 			int len;
 
 			while((len = fis.read(b)) != -1){
 				output.write(b,0,len);
 			}
-
-			output.print("MSS Studio");
+			
+			output.write(("MSS Studio").getBytes());
 
 			output.close();
 
 			fis.close();
+			
+			server.close();
 
 			System.err.println("成功响应本次请求\n\n\n");
 			
