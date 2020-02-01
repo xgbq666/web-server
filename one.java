@@ -48,28 +48,52 @@ public class Web1 {
 			
 			File a = new File(target);
 			
-			File wrongpage = new File("/page/404.html");
+			File wrongpage = new File("404.html");
 			
 			if(a.isDirectory()) {
 				File[] files = a.listFiles();
 				
-				FileInputStream fis = new FileInputStream(files[0]);
+				if(files.length == 0) {
+					FileInputStream fis = new FileInputStream(wrongpage);
+					
+					String repsonsedHead = "HTTP/1.1 200 \r\n" + "Content-Type:text/html\r\n" + "\r\n";
+
+					byte[] b = new byte[1024];
+
+					output.write(repsonsedHead.getBytes());
 				
-				String repsonsedHead = "HTTP/1.1 200 \r\n" + "Content-Type:text/html\r\n" + "\r\n";
+					int len;
 
-				byte[] b = new byte[1024];
-
-				output.write(repsonsedHead.getBytes());
-			
-				int len;
-
-				while((len = fis.read(b)) != -1){
-					output.write(b,0,len);
+					while((len = fis.read(b)) != -1){
+						output.write(b,0,len);
+					}
+				
+					output.write(("MSS Studio").getBytes());
+					
+					fis.close();
 				}
-			
-				output.write(("MSS Studio").getBytes());
+				else {
+					for(int m=0;m<files.length;m++) {
+						
+					FileInputStream fis = new FileInputStream(files[m]);
+					
+					String repsonsedHead = "HTTP/1.1 200 \r\n" + "Content-Type:text/html\r\n" + "\r\n";
+
+					byte[] b = new byte[1024];
+
+					output.write(repsonsedHead.getBytes());
 				
-				fis.close();
+					int len;
+
+					while((len = fis.read(b)) != -1){
+						output.write(b,0,len);
+					}
+				
+					output.write(("MSS Studio").getBytes());
+					
+					fis.close();
+					}
+				}				
 			}
 			
 			else {
