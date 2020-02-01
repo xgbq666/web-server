@@ -1,12 +1,8 @@
 import java.io.*;
 import java.net.*;
 
-public class one {
-
-
+public class Web1 {
 	public static void main(String[] args) throws IOException {
-
-		File a = new File("1.html");
 
 		ServerSocket server = new ServerSocket(9999);
 
@@ -19,8 +15,6 @@ public class one {
 			System.err.println("接收到请求！");
 
 			BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream(),"GBK"));
-			
-			
 
 			StringBuilder sb = new StringBuilder();
 
@@ -34,39 +28,75 @@ public class one {
 				count = input.read(buffer);
 				sb.append(buffer);
 			}
+			
+			StringBuilder Filepath = new StringBuilder();
+			
+			for(int i=5;i<sb.length();i++) {			
+				if(buffer[i] == ' ') {
+					break;
+				}
+				Filepath.append(buffer[i]);
+			}
+			
+			String target = ""+Filepath;
 
 			System.err.println("获得的请求报文如下：\n"+sb);
 
 			PrintStream output = new PrintStream(socket.getOutputStream());
 
 			System.out.println("开始响应请求");
-
-			FileInputStream fis = new FileInputStream(a);
 			
-			String repsonsedHead = "HTTP/1.1 200 \r\n" + "Content-Type:text/html\r\n" + "\r\n";
-
-			byte[] b = new byte[1024];
-
-			output.write(repsonsedHead.getBytes());
+			File a = new File(target);
 			
-			int len;
+			File wrongpage = new File("/page/404.html");
+			
+			if(a.isDirectory()) {
+				File[] files = a.listFiles();
+				
+				FileInputStream fis = new FileInputStream(files[0]);
+				
+				String repsonsedHead = "HTTP/1.1 200 \r\n" + "Content-Type:text/html\r\n" + "\r\n";
 
-			while((len = fis.read(b)) != -1){
-				output.write(b,0,len);
+				byte[] b = new byte[1024];
+
+				output.write(repsonsedHead.getBytes());
+			
+				int len;
+
+				while((len = fis.read(b)) != -1){
+					output.write(b,0,len);
+				}
+			
+				output.write(("MSS Studio").getBytes());
+				
+				fis.close();
 			}
 			
-			output.write(("MSS Studio").getBytes());
+			else {
+				FileInputStream fis = new FileInputStream(a);
+			
+				String repsonsedHead = "HTTP/1.1 200 \r\n" + "Content-Type:text/html\r\n" + "\r\n";
+
+				byte[] b = new byte[1024];
+
+				output.write(repsonsedHead.getBytes());
+			
+				int len;
+
+				while((len = fis.read(b)) != -1){
+					output.write(b,0,len);
+				}
+			
+				output.write(("MSS Studio").getBytes());
+				
+				fis.close();
+			}
 
 			output.close();
-
-			fis.close();
-			
-			server.close();
 
 			System.err.println("成功响应本次请求\n\n\n");
 			
 		}
 
 	}
-
 }
