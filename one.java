@@ -29,16 +29,13 @@ public class Web1 {
 				sb.append(buffer);
 			}
 			
-			StringBuilder Filepath = new StringBuilder();
+			String trans = ""+sb;
 			
-			for(int i=5;i<sb.length();i++) {			
-				if(buffer[i] == ' ') {
-					break;
-				}
-				Filepath.append(buffer[i]);
-			}
+			String[] temp = trans.split(" ");
 			
-			String target = ""+Filepath;
+			String target = temp[1].substring(1);
+			
+			System.out.println(target);
 
 			System.err.println("获得的请求报文如下：\n"+sb);
 
@@ -117,6 +114,7 @@ public class Web1 {
 					fis.close();
 				}
 			}catch(IOException e) {
+				
 				FileInputStream fis = new FileInputStream(wrongpage);
 				
 				String repsonsedHead = "HTTP/1.1 200 \r\n" + "Content-Type:text/html\r\n" + "\r\n";
@@ -134,6 +132,8 @@ public class Web1 {
 				output.write(("MSS Studio").getBytes());
 				
 				fis.close();
+			}catch(ArrayIndexOutOfBoundsException f) {
+				
 			}
 
 			output.close();
