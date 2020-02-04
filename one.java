@@ -2,6 +2,24 @@ import java.io.*;
 import java.net.*;
 
 public class Web1 {
+	public static String contenttype(String filename) {
+		String type = filename.substring(filename.lastIndexOf(".")+1);
+		if(type == "html") {
+			return "text/html";
+		}
+		else if(type == "jpg") {
+			return "image/jpeg";
+		}
+		else if(type == "png") {
+			return "image/png";
+		}
+		else {
+			System.err.println("Can not identify the filetype");
+			return "abc";
+		}
+	}
+	
+	
 	public static void main(String[] args) throws IOException {
 
 		ServerSocket server = new ServerSocket(9999);
@@ -34,8 +52,6 @@ public class Web1 {
 			String[] temp = trans.split(" ");
 			
 			String target = temp[1].substring(1);
-			
-			System.out.println(target);
 
 			System.err.println("获得的请求报文如下：\n"+sb);
 
@@ -75,7 +91,7 @@ public class Web1 {
 							
 						FileInputStream fis = new FileInputStream(files[m]);
 						
-						String repsonsedHead = "HTTP/1.1 200 \r\n" + "Content-Type:text/html\r\n" + "\r\n";
+						String repsonsedHead = "HTTP/1.1 200 \r\n" + "Content-Type:"+contenttype(files[m].getName())+"\r\n" + "\r\n";
 
 						byte[] b = new byte[1024];
 
@@ -97,7 +113,7 @@ public class Web1 {
 				else {
 					FileInputStream fis = new FileInputStream(a);
 				
-					String repsonsedHead = "HTTP/1.1 200 \r\n" + "Content-Type:text/html\r\n" + "\r\n";
+					String repsonsedHead = "HTTP/1.1 200 \r\n" + "Content-Type:"+contenttype(a.getName())+"\r\n" + "\r\n";
 
 					byte[] b = new byte[1024];
 
