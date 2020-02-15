@@ -31,23 +31,26 @@ class Myresponse implements Runnable{
 	
 	public static String contentType(String filename) {
 		String type = filename.substring(filename.lastIndexOf(".")+1);
-		if(type == "html") {
+		
+		System.out.println(type);
+		
+		if(type.equals("html") ) {
 			return "text/html";
 		}
-		else if(type == "jpg") {
+		else if(type.equals("jpg")) {
 			return "image/jpeg";
 		}
-		else if(type == "png") {
+		else if(type.equals("png")) {
 			return "image/png";
 		}
 		else {
 			System.err.println("Can not identify the filetype");
-			return "abc";
+			return "text/html";
 		}
 	}
 	
-	public void response(String filename) {
-		try {
+	public void response(String filename) throws IOException {
+	
 			PrintStream output = new PrintStream(socket.getOutputStream());
 		
 			FileInputStream fis = new FileInputStream(new File(filename));
@@ -71,10 +74,6 @@ class Myresponse implements Runnable{
 			output.close();
 
 			System.err.println("成功响应本次请求\n\n\n");
-		}catch(IOException b) {
-			
-		}
-		
 		
 	}
 
@@ -113,7 +112,7 @@ class Myresponse implements Runnable{
 				
 				for(int m=0;m<files.length;m++) {
 					
-					this.response(files[m].getName());
+					this.response(files[m].getParent()+"/"+files[m].getName());
 
 				}
 			}
@@ -121,8 +120,14 @@ class Myresponse implements Runnable{
 				this.response(a.getName());
 			}
 			
-		} catch (IOException p) {
-			this.response(this.errorpage);
+		} catch (FileNotFoundException p) {
+			try {
+				this.response(this.errorpage);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} catch (IOException m) {
+			m.printStackTrace();
 		}
 		
 	}
