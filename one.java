@@ -25,6 +25,8 @@ class Myresponse implements Runnable{
 	
 	String errorpage = "404.html";
 	
+	private static Object obj = new Object();
+	
 	public Myresponse(Socket socket1) {
 		this.socket = socket1;
 	}
@@ -79,62 +81,64 @@ class Myresponse implements Runnable{
 
 	@Override
 	public void run(){
-		
-		try {
-			
-			BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			
-			StringBuilder sb = new StringBuilder();
-
-			Integer bufferSize = 1024;
-
-			char[] buffer = new char[bufferSize];
-
-			Integer count = bufferSize;
-
-			while (count.equals(bufferSize)) {
-				count = input.read(buffer);
-				sb.append(buffer);
-			}
-			
-			System.err.println("获得的请求报文如下：\n"+sb);
-
-			System.out.println("开始响应请求");
-			
-			MyUrl url =new MyUrl(sb);
-			
-			url.getUrl();
-			
-			File a = new File(url.target);
-				
-			if(a.isDirectory()) {
-				File[] files = a.listFiles();
-				
-				for(int m=0;m<files.length;m++) {
-					
-					this.response(files[m].getParent()+"/"+files[m].getName());
-
-				}
-			}
-			else {
-				this.response(a.getName());
-			}
-			
-		} catch (FileNotFoundException p) {
+		synchronized (obj) {
 			try {
-				this.response(this.errorpage);
-			} catch (IOException e) {
-				e.printStackTrace();
+				
+				BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				
+				StringBuilder sb = new StringBuilder();
+
+				Integer bufferSize = 1024;
+
+				char[] buffer = new char[bufferSize];
+
+				Integer count = bufferSize;
+
+				while (count.equals(bufferSize)) {
+					count = input.read(buffer);
+					sb.append(buffer);
+				}
+				
+				System.err.println("获得的请求报文如下：\n"+sb);
+
+				System.out.println("开始响应请求");
+				
+				MyUrl url =new MyUrl(sb);
+				
+				url.getUrl();
+				
+				File a = new File(url.target);
+					
+				if(a.isDirectory()) {
+					File[] files = a.listFiles();
+					
+					for(int m=0;m<files.length;m++) {
+						
+						this.response(files[m].getParent()+"/"+files[m].getName());
+
+					}
+				}
+				else {
+					this.response(a.getName());
+				}
+				
+			} catch (FileNotFoundException p) {
+				try {
+					this.response(this.errorpage);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			} catch (IOException m) {
+				m.printStackTrace();
+			} catch (ArrayIndexOutOfBoundsException c) {
+				
 			}
-		} catch (IOException m) {
-			m.printStackTrace();
 		}
-		
-	}
-	
+	}	
 }
 
 public class Server {
+	
 	public static void main(String[] args) throws IOException {
 		ServerSocket server = new ServerSocket(9999);
 		
